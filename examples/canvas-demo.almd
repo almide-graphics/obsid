@@ -5,11 +5,11 @@ effect fn main() -> Unit = {
   canvas.filled_rect(0.0, 0.0, 800.0, 600.0, "#16213e")
 
   // Grid lines
-  for i in 0..16 {
+  for i in 0..<16 {
     let x = float.from(i) * 50.0
     canvas.line(x, 0.0, x, 600.0, "#1a1a4e", 0.5)
   }
-  for i in 0..12 {
+  for i in 0..<12 {
     let y = float.from(i) * 50.0
     canvas.line(0.0, y, 800.0, y, "#1a1a4e", 0.5)
   }

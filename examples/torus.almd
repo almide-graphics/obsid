@@ -20,8 +20,8 @@ effect fn main() -> Unit = {
   let verts = bytes.zeros(vc * 44)
   let idx = bytes.zeros(ic * 2)
 
-  for j in 0..(major_segs + 1) {
-    for i in 0..(minor_segs + 1) {
+  for j in 0..<(major_segs + 1) {
+    for i in 0..<(minor_segs + 1) {
       let u = 2.0 * obsid.pi() * obsid.to_float(i) / obsid.to_float(minor_segs)
       let v = 2.0 * obsid.pi() * obsid.to_float(j) / obsid.to_float(major_segs)
       let cu = obsid.cos(u)
@@ -56,8 +56,8 @@ effect fn main() -> Unit = {
     }
   }
 
-  for j in 0..major_segs {
-    for i in 0..minor_segs {
+  for j in 0..<major_segs {
+    for i in 0..<minor_segs {
       let qi = j * minor_segs + i
       let off = qi * 12
       let a = j * (minor_segs + 1) + i

@@ -49,8 +49,8 @@ effect fn main() -> Unit = {
   let tex_bytes = tex_size * tex_size * 4
   let tex_data = bytes.zeros(tex_bytes)
 
-  for y in 0..tex_size {
-    for x in 0..tex_size {
+  for y in 0..<tex_size {
+    for x in 0..<tex_size {
       let i = (y * tex_size + x) * 4
       let cx = x / 8
       let cy = y / 8
@@ -114,7 +114,7 @@ effect fn main() -> Unit = {
   write_vert(verts, 22, p, p, n,   0.0, 0.0, n,  1.0, 1.0)
   write_vert(verts, 23, p, n, n,   0.0, 0.0, n,  0.0, 1.0)
 
-  for f in 0..6 {
+  for f in 0..<6 {
     write_face_indices(idx, f)
   }
 

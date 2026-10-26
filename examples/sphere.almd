@@ -27,8 +27,8 @@ effect fn main() -> Unit = {
   let verts = bytes.zeros(vc * 44)
   let idx = bytes.zeros(ic * 2)
 
-  for ring in 0..(rings + 1) {
-    for seg in 0..(segs + 1) {
+  for ring in 0..<(rings + 1) {
+    for seg in 0..<(segs + 1) {
       let phi = obsid.pi() * obsid.to_float(ring) / obsid.to_float(rings)
       let theta = 2.0 * obsid.pi() * obsid.to_float(seg) / obsid.to_float(segs)
       let sin_phi = obsid.sin(phi)
@@ -50,8 +50,8 @@ effect fn main() -> Unit = {
     }
   }
 
-  for ring in 0..rings {
-    for seg in 0..segs {
+  for ring in 0..<rings {
+    for seg in 0..<segs {
       let qi = ring * segs + seg
       let off = qi * 12
       let a = ring * (segs + 1) + seg

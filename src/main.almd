@@ -22,8 +22,8 @@ effect fn main() -> Unit = {
   let idx = bytes.zeros(ic * 2)
 
   // ── Build vertices ──
-  for z in 0..size {
-    for x in 0..size {
+  for z in 0..<size {
+    for x in 0..<size {
       let i = z * size + x
       let off = i * 44
 
@@ -67,8 +67,8 @@ effect fn main() -> Unit = {
   }
 
   // ── Build indices ──
-  for z in 0..(size - 1) {
-    for x in 0..(size - 1) {
+  for z in 0..<(size - 1) {
+    for x in 0..<(size - 1) {
       let qi = z * (size - 1) + x
       let off = qi * 12  // 6 indices * 2 bytes
       let v0 = z * size + x
