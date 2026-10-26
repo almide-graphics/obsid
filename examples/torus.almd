@@ -17,8 +17,8 @@ effect fn main() -> Unit = {
   let vc = (major_segs + 1) * (minor_segs + 1)
   let ic = major_segs * minor_segs * 6
 
-  let verts = bytes.new(vc * 44)
-  let idx = bytes.new(ic * 2)
+  let verts = bytes.zeros(vc * 44)
+  let idx = bytes.zeros(ic * 2)
 
   for j in 0..(major_segs + 1) {
     for i in 0..(minor_segs + 1) {
@@ -42,17 +42,17 @@ effect fn main() -> Unit = {
       let vi = j * (minor_segs + 1) + i
       let off = vi * 44
 
-      bytes.set_f32_le(verts, off + 0, x)
-      bytes.set_f32_le(verts, off + 4, y)
-      bytes.set_f32_le(verts, off + 8, z)
-      bytes.set_f32_le(verts, off + 12, nx)
-      bytes.set_f32_le(verts, off + 16, ny)
-      bytes.set_f32_le(verts, off + 20, nz)
+      bytes.put_f32_le(verts, off + 0, x)
+      bytes.put_f32_le(verts, off + 4, y)
+      bytes.put_f32_le(verts, off + 8, z)
+      bytes.put_f32_le(verts, off + 12, nx)
+      bytes.put_f32_le(verts, off + 16, ny)
+      bytes.put_f32_le(verts, off + 20, nz)
       // Color: hue shifts along the major ring
       let t = (cv + 1.0) * 0.5
-      bytes.set_f32_le(verts, off + 24, 0.9 - t * 0.4)
-      bytes.set_f32_le(verts, off + 28, 0.3 + t * 0.5)
-      bytes.set_f32_le(verts, off + 32, 0.4 + t * 0.4)
+      bytes.put_f32_le(verts, off + 24, 0.9 - t * 0.4)
+      bytes.put_f32_le(verts, off + 28, 0.3 + t * 0.5)
+      bytes.put_f32_le(verts, off + 32, 0.4 + t * 0.4)
     }
   }
 
@@ -62,12 +62,12 @@ effect fn main() -> Unit = {
       let off = qi * 12
       let a = j * (minor_segs + 1) + i
       let b = a + minor_segs + 1
-      bytes.set_u16_le(idx, off + 0, a)
-      bytes.set_u16_le(idx, off + 2, a + 1)
-      bytes.set_u16_le(idx, off + 4, b)
-      bytes.set_u16_le(idx, off + 6, a + 1)
-      bytes.set_u16_le(idx, off + 8, b + 1)
-      bytes.set_u16_le(idx, off + 10, b)
+      bytes.put_u16_le(idx, off + 0, a)
+      bytes.put_u16_le(idx, off + 2, a + 1)
+      bytes.put_u16_le(idx, off + 4, b)
+      bytes.put_u16_le(idx, off + 6, a + 1)
+      bytes.put_u16_le(idx, off + 8, b + 1)
+      bytes.put_u16_le(idx, off + 10, b)
     }
   }
 

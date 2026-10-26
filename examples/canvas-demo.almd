@@ -6,11 +6,11 @@ effect fn main() -> Unit = {
 
   // Grid lines
   for i in 0..16 {
-    let x = int.to_float(i) * 50.0
+    let x = float.from(i) * 50.0
     canvas.line(x, 0.0, x, 600.0, "#1a1a4e", 0.5)
   }
   for i in 0..12 {
-    let y = int.to_float(i) * 50.0
+    let y = float.from(i) * 50.0
     canvas.line(0.0, y, 800.0, y, "#1a1a4e", 0.5)
   }
 
@@ -28,7 +28,7 @@ effect fn main() -> Unit = {
   bars |> list.enumerate |> list.map((entry) => {
     let (i, bar) = entry
     let (label, height, color) = bar
-    let x = 60.0 + int.to_float(i) * 115.0
+    let x = 60.0 + float.from(i) * 115.0
 
     // Bar
     canvas.filled_rect(x, base_y - height, bar_width, height, color)
@@ -39,7 +39,7 @@ effect fn main() -> Unit = {
 
     // Value
     canvas.text(
-      int.to_string(float.to_int(height)),
+      int.to_string(int.from_saturating(height)),
       x + bar_width / 2.0,
       base_y - height - 10.0,
       "12px sans-serif",

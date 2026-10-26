@@ -18,8 +18,8 @@ effect fn main() -> Unit = {
   let qc = (size - 1) * (size - 1)
   let ic = qc * 6
 
-  let verts = bytes.new(vc * 44)
-  let idx = bytes.new(ic * 2)
+  let verts = bytes.zeros(vc * 44)
+  let idx = bytes.zeros(ic * 2)
 
   // ── Build vertices ──
   for z in 0..size {
@@ -35,9 +35,9 @@ effect fn main() -> Unit = {
         + obsid.sin(fx * 0.1 + fz * 0.15) * 3.0
 
       // Position
-      bytes.set_f32_le(verts, off + 0, fx)
-      bytes.set_f32_le(verts, off + 4, fy)
-      bytes.set_f32_le(verts, off + 8, fz)
+      bytes.put_f32_le(verts, off + 0, fx)
+      bytes.put_f32_le(verts, off + 4, fy)
+      bytes.put_f32_le(verts, off + 8, fz)
 
       // Normal from analytic gradient
       // dh/dx = 0.625 * cos(0.25 fx) + 0.3 * cos(0.1 fx + 0.15 fz)
@@ -51,18 +51,18 @@ effect fn main() -> Unit = {
       let nx = 0.0 - dhdx
       let nz = 0.0 - dhdz
       let nlen = obsid.sqrt(nx * nx + 1.0 + nz * nz)
-      bytes.set_f32_le(verts, off + 12, nx / nlen)
-      bytes.set_f32_le(verts, off + 16, 1.0 / nlen)
-      bytes.set_f32_le(verts, off + 20, nz / nlen)
+      bytes.put_f32_le(verts, off + 12, nx / nlen)
+      bytes.put_f32_le(verts, off + 16, 1.0 / nlen)
+      bytes.put_f32_le(verts, off + 20, nz / nlen)
 
       // Color: height-based gradient (low=green, high=tan)
       let t = (fy + 6.0) / 12.0
       let r = 0.25 + t * 0.45
       let g = 0.50 + t * 0.20
       let b = 0.20 + t * 0.10
-      bytes.set_f32_le(verts, off + 24, r)
-      bytes.set_f32_le(verts, off + 28, g)
-      bytes.set_f32_le(verts, off + 32, b)
+      bytes.put_f32_le(verts, off + 24, r)
+      bytes.put_f32_le(verts, off + 28, g)
+      bytes.put_f32_le(verts, off + 32, b)
     }
   }
 
@@ -75,12 +75,12 @@ effect fn main() -> Unit = {
       let v1 = v0 + 1
       let v2 = v0 + size
       let v3 = v2 + 1
-      bytes.set_u16_le(idx, off + 0, v0)
-      bytes.set_u16_le(idx, off + 2, v2)
-      bytes.set_u16_le(idx, off + 4, v1)
-      bytes.set_u16_le(idx, off + 6, v1)
-      bytes.set_u16_le(idx, off + 8, v2)
-      bytes.set_u16_le(idx, off + 10, v3)
+      bytes.put_u16_le(idx, off + 0, v0)
+      bytes.put_u16_le(idx, off + 2, v2)
+      bytes.put_u16_le(idx, off + 4, v1)
+      bytes.put_u16_le(idx, off + 6, v1)
+      bytes.put_u16_le(idx, off + 8, v2)
+      bytes.put_u16_le(idx, off + 10, v3)
     }
   }
 

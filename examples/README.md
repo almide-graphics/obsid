@@ -39,8 +39,8 @@ cd host/browser && python3 -m http.server 8765
 All examples follow the same structure:
 
 1. **Allocate buffers** — `bytes.new(vertex_count * 36)` and `bytes.new(index_count * 2)`
-2. **Fill vertices** — `bytes.set_f32_le` for positions, normals, colors (9 floats per vertex)
-3. **Fill indices** — `bytes.set_u16_le` for triangle indices
+2. **Fill vertices** — `bytes.put_f32_le` for positions, normals, colors (9 floats per vertex)
+3. **Fill indices** — `bytes.put_u16_le` for triangle indices
 4. **Upload** — `obsid.upload_mesh(id, bytes.data_ptr(verts), vc, bytes.data_ptr(idx), ic)`
 5. **Render loop** — `render_frame(time)` updates camera/lights/fog and calls `obsid.render()`
 

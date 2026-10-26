@@ -17,17 +17,17 @@ effect fn on_wheel(delta_y: Float) -> Unit = { obsid.orbit_on_wheel(delta_y) }
 // Layout matches obsid's 44-byte stride: pos(12) + norm(12) + color(12) + uv(8).
 effect fn write_vert(verts: Bytes, vi: Int, px: Float, py: Float, pz: Float, nx: Float, ny: Float, nz: Float, u: Float, v: Float) -> Unit = {
   let o = vi * 44
-  bytes.set_f32_le(verts, o + 0, px)
-  bytes.set_f32_le(verts, o + 4, py)
-  bytes.set_f32_le(verts, o + 8, pz)
-  bytes.set_f32_le(verts, o + 12, nx)
-  bytes.set_f32_le(verts, o + 16, ny)
-  bytes.set_f32_le(verts, o + 20, nz)
-  bytes.set_f32_le(verts, o + 24, 1.0)
-  bytes.set_f32_le(verts, o + 28, 1.0)
-  bytes.set_f32_le(verts, o + 32, 1.0)
-  bytes.set_f32_le(verts, o + 36, u)
-  bytes.set_f32_le(verts, o + 40, v)
+  bytes.put_f32_le(verts, o + 0, px)
+  bytes.put_f32_le(verts, o + 4, py)
+  bytes.put_f32_le(verts, o + 8, pz)
+  bytes.put_f32_le(verts, o + 12, nx)
+  bytes.put_f32_le(verts, o + 16, ny)
+  bytes.put_f32_le(verts, o + 20, nz)
+  bytes.put_f32_le(verts, o + 24, 1.0)
+  bytes.put_f32_le(verts, o + 28, 1.0)
+  bytes.put_f32_le(verts, o + 32, 1.0)
+  bytes.put_f32_le(verts, o + 36, u)
+  bytes.put_f32_le(verts, o + 40, v)
 }
 
 // Write one face's 6 indices (two triangles sharing an edge).
@@ -35,19 +35,19 @@ effect fn write_vert(verts: Bytes, vi: Int, px: Float, py: Float, pz: Float, nx:
 effect fn write_face_indices(idx: Bytes, face: Int) -> Unit = {
   let io = face * 12
   let vi = face * 4
-  bytes.set_u16_le(idx, io + 0, vi + 0)
-  bytes.set_u16_le(idx, io + 2, vi + 1)
-  bytes.set_u16_le(idx, io + 4, vi + 2)
-  bytes.set_u16_le(idx, io + 6, vi + 0)
-  bytes.set_u16_le(idx, io + 8, vi + 2)
-  bytes.set_u16_le(idx, io + 10, vi + 3)
+  bytes.put_u16_le(idx, io + 0, vi + 0)
+  bytes.put_u16_le(idx, io + 2, vi + 1)
+  bytes.put_u16_le(idx, io + 4, vi + 2)
+  bytes.put_u16_le(idx, io + 6, vi + 0)
+  bytes.put_u16_le(idx, io + 8, vi + 2)
+  bytes.put_u16_le(idx, io + 10, vi + 3)
 }
 
 effect fn main() -> Unit = {
   // ── Procedural texture: 64×64 RGBA with 8×8 cells ──
   let tex_size = 64
   let tex_bytes = tex_size * tex_size * 4
-  let tex_data = bytes.new(tex_bytes)
+  let tex_data = bytes.zeros(tex_bytes)
 
   for y in 0..tex_size {
     for x in 0..tex_size {
@@ -69,8 +69,8 @@ effect fn main() -> Unit = {
 
   // ── Cube geometry: 24 verts (6 faces × 4 corners) + 36 indices ──
   // p = +1, n = -1. Corners of a unit cube centered at origin.
-  let verts = bytes.new(24 * 44)
-  let idx = bytes.new(36 * 2)
+  let verts = bytes.zeros(24 * 44)
+  let idx = bytes.zeros(36 * 2)
   let p = 1.0
   let n = 0.0 - 1.0
 

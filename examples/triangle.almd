@@ -10,67 +10,67 @@ effect fn on_pointer_move(x: Float, y: Float) -> Unit = { obsid.orbit_on_pointer
 effect fn on_wheel(delta_y: Float) -> Unit = { obsid.orbit_on_wheel(delta_y) }
 
 effect fn main() -> Unit = {
-  let verts = bytes.new(6 * 44)
-  let idx = bytes.new(6 * 2)
+  let verts = bytes.zeros(6 * 44)
+  let idx = bytes.zeros(6 * 2)
 
   // ── Front face (normal = +Z) ──
   // v0 — top, red
   let o0 = 0
-  bytes.set_f32_le(verts, o0 + 0, 0.0)
-  bytes.set_f32_le(verts, o0 + 4, 1.2)
-  bytes.set_f32_le(verts, o0 + 8, 0.0)
-  bytes.set_f32_le(verts, o0 + 12, 0.0); bytes.set_f32_le(verts, o0 + 16, 0.0); bytes.set_f32_le(verts, o0 + 20, 1.0)
-  bytes.set_f32_le(verts, o0 + 24, 1.0); bytes.set_f32_le(verts, o0 + 28, 0.25); bytes.set_f32_le(verts, o0 + 32, 0.3)
+  bytes.put_f32_le(verts, o0 + 0, 0.0)
+  bytes.put_f32_le(verts, o0 + 4, 1.2)
+  bytes.put_f32_le(verts, o0 + 8, 0.0)
+  bytes.put_f32_le(verts, o0 + 12, 0.0); bytes.put_f32_le(verts, o0 + 16, 0.0); bytes.put_f32_le(verts, o0 + 20, 1.0)
+  bytes.put_f32_le(verts, o0 + 24, 1.0); bytes.put_f32_le(verts, o0 + 28, 0.25); bytes.put_f32_le(verts, o0 + 32, 0.3)
 
   // v1 — bottom-left, green
   let o1 = 44
-  bytes.set_f32_le(verts, o1 + 0, 0.0 - 1.1)
-  bytes.set_f32_le(verts, o1 + 4, 0.0 - 0.8)
-  bytes.set_f32_le(verts, o1 + 8, 0.0)
-  bytes.set_f32_le(verts, o1 + 12, 0.0); bytes.set_f32_le(verts, o1 + 16, 0.0); bytes.set_f32_le(verts, o1 + 20, 1.0)
-  bytes.set_f32_le(verts, o1 + 24, 0.25); bytes.set_f32_le(verts, o1 + 28, 1.0); bytes.set_f32_le(verts, o1 + 32, 0.4)
+  bytes.put_f32_le(verts, o1 + 0, 0.0 - 1.1)
+  bytes.put_f32_le(verts, o1 + 4, 0.0 - 0.8)
+  bytes.put_f32_le(verts, o1 + 8, 0.0)
+  bytes.put_f32_le(verts, o1 + 12, 0.0); bytes.put_f32_le(verts, o1 + 16, 0.0); bytes.put_f32_le(verts, o1 + 20, 1.0)
+  bytes.put_f32_le(verts, o1 + 24, 0.25); bytes.put_f32_le(verts, o1 + 28, 1.0); bytes.put_f32_le(verts, o1 + 32, 0.4)
 
   // v2 — bottom-right, blue
   let o2 = 88
-  bytes.set_f32_le(verts, o2 + 0, 1.1)
-  bytes.set_f32_le(verts, o2 + 4, 0.0 - 0.8)
-  bytes.set_f32_le(verts, o2 + 8, 0.0)
-  bytes.set_f32_le(verts, o2 + 12, 0.0); bytes.set_f32_le(verts, o2 + 16, 0.0); bytes.set_f32_le(verts, o2 + 20, 1.0)
-  bytes.set_f32_le(verts, o2 + 24, 0.25); bytes.set_f32_le(verts, o2 + 28, 0.4); bytes.set_f32_le(verts, o2 + 32, 1.0)
+  bytes.put_f32_le(verts, o2 + 0, 1.1)
+  bytes.put_f32_le(verts, o2 + 4, 0.0 - 0.8)
+  bytes.put_f32_le(verts, o2 + 8, 0.0)
+  bytes.put_f32_le(verts, o2 + 12, 0.0); bytes.put_f32_le(verts, o2 + 16, 0.0); bytes.put_f32_le(verts, o2 + 20, 1.0)
+  bytes.put_f32_le(verts, o2 + 24, 0.25); bytes.put_f32_le(verts, o2 + 28, 0.4); bytes.put_f32_le(verts, o2 + 32, 1.0)
 
   // ── Back face (same positions, normal = -Z) ──
   // v3 — top, red
   let o3 = 132
-  bytes.set_f32_le(verts, o3 + 0, 0.0)
-  bytes.set_f32_le(verts, o3 + 4, 1.2)
-  bytes.set_f32_le(verts, o3 + 8, 0.0)
-  bytes.set_f32_le(verts, o3 + 12, 0.0); bytes.set_f32_le(verts, o3 + 16, 0.0); bytes.set_f32_le(verts, o3 + 20, 0.0 - 1.0)
-  bytes.set_f32_le(verts, o3 + 24, 1.0); bytes.set_f32_le(verts, o3 + 28, 0.25); bytes.set_f32_le(verts, o3 + 32, 0.3)
+  bytes.put_f32_le(verts, o3 + 0, 0.0)
+  bytes.put_f32_le(verts, o3 + 4, 1.2)
+  bytes.put_f32_le(verts, o3 + 8, 0.0)
+  bytes.put_f32_le(verts, o3 + 12, 0.0); bytes.put_f32_le(verts, o3 + 16, 0.0); bytes.put_f32_le(verts, o3 + 20, 0.0 - 1.0)
+  bytes.put_f32_le(verts, o3 + 24, 1.0); bytes.put_f32_le(verts, o3 + 28, 0.25); bytes.put_f32_le(verts, o3 + 32, 0.3)
 
   // v4 — bottom-left, green
   let o4 = 176
-  bytes.set_f32_le(verts, o4 + 0, 0.0 - 1.1)
-  bytes.set_f32_le(verts, o4 + 4, 0.0 - 0.8)
-  bytes.set_f32_le(verts, o4 + 8, 0.0)
-  bytes.set_f32_le(verts, o4 + 12, 0.0); bytes.set_f32_le(verts, o4 + 16, 0.0); bytes.set_f32_le(verts, o4 + 20, 0.0 - 1.0)
-  bytes.set_f32_le(verts, o4 + 24, 0.25); bytes.set_f32_le(verts, o4 + 28, 1.0); bytes.set_f32_le(verts, o4 + 32, 0.4)
+  bytes.put_f32_le(verts, o4 + 0, 0.0 - 1.1)
+  bytes.put_f32_le(verts, o4 + 4, 0.0 - 0.8)
+  bytes.put_f32_le(verts, o4 + 8, 0.0)
+  bytes.put_f32_le(verts, o4 + 12, 0.0); bytes.put_f32_le(verts, o4 + 16, 0.0); bytes.put_f32_le(verts, o4 + 20, 0.0 - 1.0)
+  bytes.put_f32_le(verts, o4 + 24, 0.25); bytes.put_f32_le(verts, o4 + 28, 1.0); bytes.put_f32_le(verts, o4 + 32, 0.4)
 
   // v5 — bottom-right, blue
   let o5 = 220
-  bytes.set_f32_le(verts, o5 + 0, 1.1)
-  bytes.set_f32_le(verts, o5 + 4, 0.0 - 0.8)
-  bytes.set_f32_le(verts, o5 + 8, 0.0)
-  bytes.set_f32_le(verts, o5 + 12, 0.0); bytes.set_f32_le(verts, o5 + 16, 0.0); bytes.set_f32_le(verts, o5 + 20, 0.0 - 1.0)
-  bytes.set_f32_le(verts, o5 + 24, 0.25); bytes.set_f32_le(verts, o5 + 28, 0.4); bytes.set_f32_le(verts, o5 + 32, 1.0)
+  bytes.put_f32_le(verts, o5 + 0, 1.1)
+  bytes.put_f32_le(verts, o5 + 4, 0.0 - 0.8)
+  bytes.put_f32_le(verts, o5 + 8, 0.0)
+  bytes.put_f32_le(verts, o5 + 12, 0.0); bytes.put_f32_le(verts, o5 + 16, 0.0); bytes.put_f32_le(verts, o5 + 20, 0.0 - 1.0)
+  bytes.put_f32_le(verts, o5 + 24, 0.25); bytes.put_f32_le(verts, o5 + 28, 0.4); bytes.put_f32_le(verts, o5 + 32, 1.0)
 
   // Front: CCW from +Z
-  bytes.set_u16_le(idx, 0, 0)
-  bytes.set_u16_le(idx, 2, 1)
-  bytes.set_u16_le(idx, 4, 2)
+  bytes.put_u16_le(idx, 0, 0)
+  bytes.put_u16_le(idx, 2, 1)
+  bytes.put_u16_le(idx, 4, 2)
   // Back: CCW from -Z (reverse winding)
-  bytes.set_u16_le(idx, 6, 3)
-  bytes.set_u16_le(idx, 8, 5)
-  bytes.set_u16_le(idx, 10, 4)
+  bytes.put_u16_le(idx, 6, 3)
+  bytes.put_u16_le(idx, 8, 5)
+  bytes.put_u16_le(idx, 10, 4)
 
   obsid.create_mesh(0)
   obsid.upload_mesh(0, bytes.data_ptr(verts), 6, bytes.data_ptr(idx), 6)
