@@ -1,5 +1,6 @@
 // obsid example — procedural UV sphere with orbit camera
 import self as obsid
+import ffi
 
 // Event handlers delegate to obsid's default orbit camera.
 // Marked as effect fn to verify the compiler fix for module-qualified
@@ -66,7 +67,7 @@ effect fn main() -> Unit = {
   }
 
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, bytes.data_ptr(verts), vc, bytes.data_ptr(idx), ic)
+  obsid.upload_mesh(0, ffi.to_int(ffi.address(verts)), vc, ffi.to_int(ffi.address(idx)), ic)
   obsid.set_mesh_material(0, 64.0, 0.9, 0.9, 0.95)
 
   // target origin, initial yaw 0, pitch 0.3, distance 7, [3..20]

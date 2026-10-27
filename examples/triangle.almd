@@ -3,6 +3,7 @@
 // so it stays visible as the camera orbits all the way around.
 
 import self as obsid
+import ffi
 
 effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_down(x, y) }
 effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_up() }
@@ -73,7 +74,7 @@ effect fn main() -> Unit = {
   bytes.put_u16_le(idx, 10, 4)
 
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, bytes.data_ptr(verts), 6, bytes.data_ptr(idx), 6)
+  obsid.upload_mesh(0, ffi.to_int(ffi.address(verts)), 6, ffi.to_int(ffi.address(idx)), 6)
 
   obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 2.0, 15.0)
 }

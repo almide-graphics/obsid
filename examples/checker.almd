@@ -7,6 +7,7 @@
 // invisible line when viewed from the side.
 
 import self as obsid
+import ffi
 
 effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_down(x, y) }
 effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_up() }
@@ -65,7 +66,7 @@ effect fn main() -> Unit = {
     }
   }
 
-  obsid.upload_texture(0, bytes.data_ptr(tex_data), tex_size, tex_size)
+  obsid.upload_texture(0, ffi.to_int(ffi.address(tex_data)), tex_size, tex_size)
 
   // ── Cube geometry: 24 verts (6 faces × 4 corners) + 36 indices ──
   // p = +1, n = -1. Corners of a unit cube centered at origin.
@@ -119,7 +120,7 @@ effect fn main() -> Unit = {
   }
 
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, bytes.data_ptr(verts), 24, bytes.data_ptr(idx), 36)
+  obsid.upload_mesh(0, ffi.to_int(ffi.address(verts)), 24, ffi.to_int(ffi.address(idx)), 36)
   obsid.set_mesh_texture(0, 0)
   obsid.set_mesh_material(0, 32.0, 0.3, 0.3, 0.3)
 

@@ -5,6 +5,7 @@
 // obsid which uploads them zero-copy to WebGL.
 
 import self as obsid
+import ffi
 
 effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_down(x, y) }
 effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_up() }
@@ -85,7 +86,7 @@ effect fn main() -> Unit = {
   }
 
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, bytes.data_ptr(verts), vc, bytes.data_ptr(idx), ic)
+  obsid.upload_mesh(0, ffi.to_int(ffi.address(verts)), vc, ffi.to_int(ffi.address(idx)), ic)
   obsid.set_mesh_position(0, 0.0, 0.0, 0.0)
   obsid.set_mesh_material(0, 16.0, 0.3, 0.3, 0.4)
 
