@@ -9,14 +9,14 @@
 import self as obsid
 import ffi
 
-effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_down(x, y) }
-effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_up() }
-effect fn on_pointer_move(x: Float, y: Float) -> Unit = { obsid.orbit_on_pointer_move(x, y) }
-effect fn on_wheel(delta_y: Float) -> Unit = { obsid.orbit_on_wheel(delta_y) }
+effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_down(x, y)! }
+effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_up()! }
+effect fn on_pointer_move(x: Float, y: Float) -> Unit = { obsid.orbit_on_pointer_move(x, y)! }
+effect fn on_wheel(delta_y: Float) -> Unit = { obsid.orbit_on_wheel(delta_y)! }
 
 // Write one vertex (pos + normal + white color + uv) into `verts` at index `vi`.
 // Layout matches obsid's 44-byte stride: pos(12) + norm(12) + color(12) + uv(8).
-effect fn write_vert(verts: Bytes, vi: Int, px: Float, py: Float, pz: Float, nx: Float, ny: Float, nz: Float, u: Float, v: Float) -> Unit = {
+fn write_vert(mut verts: Bytes, vi: Int, px: Float, py: Float, pz: Float, nx: Float, ny: Float, nz: Float, u: Float, v: Float) -> Unit = {
   let o = vi * 44
   bytes.put_f32_le(verts, o + 0, px)
   bytes.put_f32_le(verts, o + 4, py)
@@ -33,7 +33,7 @@ effect fn write_vert(verts: Bytes, vi: Int, px: Float, py: Float, pz: Float, nx:
 
 // Write one face's 6 indices (two triangles sharing an edge).
 // Assumes 4 verts per face, laid out CCW from outside at (face*4 .. face*4+3).
-effect fn write_face_indices(idx: Bytes, face: Int) -> Unit = {
+fn write_face_indices(mut idx: Bytes, face: Int) -> Unit = {
   let io = face * 12
   let vi = face * 4
   bytes.put_u16_le(idx, io + 0, vi + 0)
@@ -48,7 +48,7 @@ effect fn main() -> Unit = {
   // ── Procedural texture: 64×64 RGBA with 8×8 cells ──
   let tex_size = 64
   let tex_bytes = tex_size * tex_size * 4
-  let tex_data = bytes.zeros(tex_bytes)
+  var tex_data = bytes.zeros(tex_bytes)
 
   for y in 0..<tex_size {
     for x in 0..<tex_size {
@@ -59,10 +59,10 @@ effect fn main() -> Unit = {
       let r = if checker == 0 then 230 else 40
       let g = if checker == 0 then 220 else 40
       let b = if checker == 0 then 200 else 60
-      bytes.set(tex_data, i + 0, r)
-      bytes.set(tex_data, i + 1, g)
-      bytes.set(tex_data, i + 2, b)
-      bytes.set(tex_data, i + 3, 255)
+      bytes.put_u8(tex_data, i + 0, r)
+      bytes.put_u8(tex_data, i + 1, g)
+      bytes.put_u8(tex_data, i + 2, b)
+      bytes.put_u8(tex_data, i + 3, 255)
     }
   }
 
@@ -70,8 +70,8 @@ effect fn main() -> Unit = {
 
   // ── Cube geometry: 24 verts (6 faces × 4 corners) + 36 indices ──
   // p = +1, n = -1. Corners of a unit cube centered at origin.
-  let verts = bytes.zeros(24 * 44)
-  let idx = bytes.zeros(36 * 2)
+  var verts = bytes.zeros(24 * 44)
+  var idx = bytes.zeros(36 * 2)
   let p = 1.0
   let n = 0.0 - 1.0
 
@@ -126,11 +126,11 @@ effect fn main() -> Unit = {
 
   // Orbit camera: pitch ~17°, distance 5 — frames the 2×2×2 cube comfortably
   // and leaves room for the tumbling animation without clipping.
-  obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.3, 5.0, 2.5, 15.0)
+  obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.3, 5.0, 2.5, 15.0)!
 }
 
 effect fn render_frame(time: Float) -> Unit = {
-  obsid.orbit_apply(60.0, obsid.get_aspect(), 0.1, 100.0)
+  obsid.orbit_apply(60.0, obsid.get_aspect(), 0.1, 100.0)!
   obsid.set_dir_light(1.0, 0.95, 0.85, 0.4, 1.0, 0.6)
   obsid.set_ambient(0.25, 0.25, 0.3)
   obsid.set_fog(0.06, 0.08, 0.14, 20.0, 60.0)
