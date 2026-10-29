@@ -9,6 +9,11 @@
 //
 // Vertex format: pos[3] f32 + norm[3] f32 + color[3] f32 = 36 bytes
 // Index format: u16
+//
+// Buffers cross as an `ffi.Region` (ADR-0031): the host receives its base and
+// the length the runtime holds, never a caller-typed length.
+
+import ffi
 
 // ── State ───────────────────────────────────────────
 
@@ -30,7 +35,7 @@ fn get_state_f(slot: Int) -> Float
 fn create_mesh(id: Int) -> Unit
 
 @extern(wasm, "obsid", "upload_mesh")
-fn upload_mesh(id: Int, vert_ptr: Int, vert_count: Int, idx_ptr: Int, idx_count: Int) -> Unit
+fn upload_mesh(id: Int, verts: Region, vert_count: Int, indices: Region, idx_count: Int) -> Unit
 
 @extern(wasm, "obsid", "set_mesh_position")
 fn set_mesh_position(id: Int, x: Float, y: Float, z: Float) -> Unit
@@ -56,7 +61,7 @@ fn delete_mesh(id: Int) -> Unit
 // ── Textures ────────────────────────────────────────
 
 @extern(wasm, "obsid", "upload_texture")
-fn upload_texture(id: Int, data_ptr: Int, width: Int, height: Int) -> Unit
+fn upload_texture(id: Int, pixels: Region, width: Int, height: Int) -> Unit
 
 @extern(wasm, "obsid", "set_mesh_texture")
 fn set_mesh_texture(mesh_id: Int, tex_id: Int) -> Unit
@@ -68,17 +73,17 @@ fn clear_mesh_texture(mesh_id: Int) -> Unit
 fn delete_texture(id: Int) -> Unit
 
 @extern(wasm, "obsid", "upload_texture_raw")
-fn upload_texture_raw(id: Int, data_ptr: Int, data_len: Int) -> Unit
+fn upload_texture_raw(id: Int, encoded: Region) -> Unit
 
 @extern(wasm, "obsid", "update_mesh_verts")
-fn update_mesh_verts(id: Int, vert_ptr: Int, vert_count: Int) -> Unit
+fn update_mesh_verts(id: Int, verts: Region, vert_count: Int) -> Unit
 
 @extern(wasm, "obsid", "set_mesh_toon")
 fn set_mesh_toon(mesh_id: Int, shade_r: Float, shade_g: Float, shade_b: Float, threshold: Float) -> Unit
 
 // Note: named create_shader_program to avoid collision with webgl.create_program
 @extern(wasm, "obsid", "create_program")
-fn create_shader_program(id: Int, frag_ptr: Int, frag_len: Int) -> Unit
+fn create_shader_program(id: Int, frag: Region) -> Unit
 
 @extern(wasm, "obsid", "set_mesh_program")
 fn set_mesh_shader(mesh_id: Int, program_id: Int) -> Unit

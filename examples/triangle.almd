@@ -74,7 +74,7 @@ effect fn main() -> Unit = {
   bytes.put_u16_le(idx, 10, 4)
 
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, ffi.to_int(ffi.address(verts)), 6, ffi.to_int(ffi.address(idx)), 6)
+  obsid.upload_mesh(0, ffi.region(verts), 6, ffi.region(idx), 6)
 
   obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 2.0, 15.0)!
 }
