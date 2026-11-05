@@ -5,11 +5,12 @@
 // obsid which uploads them zero-copy to WebGL.
 
 import self as obsid
+import ffi
 
-effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_down(x, y) }
-effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_up() }
-effect fn on_pointer_move(x: Float, y: Float) -> Unit = { obsid.orbit_on_pointer_move(x, y) }
-effect fn on_wheel(delta_y: Float) -> Unit = { obsid.orbit_on_wheel(delta_y) }
+effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_down(x, y)! }
+effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = { obsid.orbit_on_pointer_up()! }
+effect fn on_pointer_move(x: Float, y: Float) -> Unit = { obsid.orbit_on_pointer_move(x, y)! }
+effect fn on_wheel(delta_y: Float) -> Unit = { obsid.orbit_on_wheel(delta_y)! }
 
 effect fn main() -> Unit = {
   let size = 32
@@ -18,12 +19,12 @@ effect fn main() -> Unit = {
   let qc = (size - 1) * (size - 1)
   let ic = qc * 6
 
-  let verts = bytes.new(vc * 44)
-  let idx = bytes.new(ic * 2)
+  var verts = bytes.zeros(vc * 44)
+  var idx = bytes.zeros(ic * 2)
 
   // ── Build vertices ──
-  for z in 0..size {
-    for x in 0..size {
+  for z in 0..<size {
+    for x in 0..<size {
       let i = z * size + x
       let off = i * 44
 
@@ -35,9 +36,9 @@ effect fn main() -> Unit = {
         + obsid.sin(fx * 0.1 + fz * 0.15) * 3.0
 
       // Position
-      bytes.set_f32_le(verts, off + 0, fx)
-      bytes.set_f32_le(verts, off + 4, fy)
-      bytes.set_f32_le(verts, off + 8, fz)
+      bytes.put_f32_le(verts, off + 0, fx)
+      bytes.put_f32_le(verts, off + 4, fy)
+      bytes.put_f32_le(verts, off + 8, fz)
 
       // Normal from analytic gradient
       // dh/dx = 0.625 * cos(0.25 fx) + 0.3 * cos(0.1 fx + 0.15 fz)
@@ -51,49 +52,49 @@ effect fn main() -> Unit = {
       let nx = 0.0 - dhdx
       let nz = 0.0 - dhdz
       let nlen = obsid.sqrt(nx * nx + 1.0 + nz * nz)
-      bytes.set_f32_le(verts, off + 12, nx / nlen)
-      bytes.set_f32_le(verts, off + 16, 1.0 / nlen)
-      bytes.set_f32_le(verts, off + 20, nz / nlen)
+      bytes.put_f32_le(verts, off + 12, nx / nlen)
+      bytes.put_f32_le(verts, off + 16, 1.0 / nlen)
+      bytes.put_f32_le(verts, off + 20, nz / nlen)
 
       // Color: height-based gradient (low=green, high=tan)
       let t = (fy + 6.0) / 12.0
       let r = 0.25 + t * 0.45
       let g = 0.50 + t * 0.20
       let b = 0.20 + t * 0.10
-      bytes.set_f32_le(verts, off + 24, r)
-      bytes.set_f32_le(verts, off + 28, g)
-      bytes.set_f32_le(verts, off + 32, b)
+      bytes.put_f32_le(verts, off + 24, r)
+      bytes.put_f32_le(verts, off + 28, g)
+      bytes.put_f32_le(verts, off + 32, b)
     }
   }
 
   // ── Build indices ──
-  for z in 0..(size - 1) {
-    for x in 0..(size - 1) {
+  for z in 0..<(size - 1) {
+    for x in 0..<(size - 1) {
       let qi = z * (size - 1) + x
       let off = qi * 12  // 6 indices * 2 bytes
       let v0 = z * size + x
       let v1 = v0 + 1
       let v2 = v0 + size
       let v3 = v2 + 1
-      bytes.set_u16_le(idx, off + 0, v0)
-      bytes.set_u16_le(idx, off + 2, v2)
-      bytes.set_u16_le(idx, off + 4, v1)
-      bytes.set_u16_le(idx, off + 6, v1)
-      bytes.set_u16_le(idx, off + 8, v2)
-      bytes.set_u16_le(idx, off + 10, v3)
+      bytes.put_u16_le(idx, off + 0, v0)
+      bytes.put_u16_le(idx, off + 2, v2)
+      bytes.put_u16_le(idx, off + 4, v1)
+      bytes.put_u16_le(idx, off + 6, v1)
+      bytes.put_u16_le(idx, off + 8, v2)
+      bytes.put_u16_le(idx, off + 10, v3)
     }
   }
 
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, bytes.data_ptr(verts), vc, bytes.data_ptr(idx), ic)
+  obsid.upload_mesh(0, ffi.region(verts), vc, ffi.region(idx), ic)
   obsid.set_mesh_position(0, 0.0, 0.0, 0.0)
   obsid.set_mesh_material(0, 16.0, 0.3, 0.3, 0.4)
 
-  obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.3, 32.0, 10.0, 80.0)
+  obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.3, 32.0, 10.0, 80.0)!
 }
 
 effect fn render_frame(time: Float) -> Unit = {
-  obsid.orbit_apply(60.0, obsid.get_aspect(), 0.1, 200.0)
+  obsid.orbit_apply(60.0, obsid.get_aspect(), 0.1, 200.0)!
   obsid.set_dir_light(0.7, 0.7, 0.75, 0.5, 1.0, 0.4)
   obsid.set_ambient(0.12, 0.14, 0.2)
   obsid.set_fog(0.04, 0.05, 0.1, 30.0, 80.0)

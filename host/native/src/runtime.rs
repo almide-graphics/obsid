@@ -334,21 +334,36 @@ pub fn register_obsid_imports<T: 'static>(
         move |mut caller: Caller<'_, T>,
               id: i64,
               vert_ptr: i64,
+              vert_len: i64,
               vert_count: i64,
               idx_ptr: i64,
+              idx_len: i64,
               idx_count: i64|
               -> anyhow::Result<()> {
+            // Each buffer arrives as an ffi.Region, i.e. (base, len) with the
+            // length the runtime holds (ADR-0031 D3); the counts must fit in it.
             let memory = accessor(caller.data_mut())
                 .memory
                 .ok_or_else(|| anyhow::anyhow!("memory not ready"))?;
             let vert_bytes = (vert_count as usize) * VERTEX_STRIDE as usize;
             let idx_bytes = (idx_count as usize) * 2;
+            if vert_bytes > vert_len as usize || idx_bytes > idx_len as usize {
+                anyhow::bail!(
+                    "upload_mesh: {vert_count} vertices / {idx_count} indices exceed the {vert_len} / {idx_len} bytes given"
+                );
+            }
             let (verts, indices) = {
                 let data = memory.data(&caller);
                 let v_start = vert_ptr as usize;
                 let i_start = idx_ptr as usize;
-                let verts = data[v_start..v_start + vert_bytes].to_vec();
-                let indices = data[i_start..i_start + idx_bytes].to_vec();
+                let verts = data
+                    .get(v_start..v_start + vert_bytes)
+                    .ok_or_else(|| anyhow::anyhow!("upload_mesh: vertex region out of memory"))?
+                    .to_vec();
+                let indices = data
+                    .get(i_start..i_start + idx_bytes)
+                    .ok_or_else(|| anyhow::anyhow!("upload_mesh: index region out of memory"))?
+                    .to_vec();
                 (verts, indices)
             };
             let state = accessor(caller.data_mut());
@@ -436,7 +451,7 @@ pub fn register_obsid_imports<T: 'static>(
     linker.func_wrap(
         "obsid",
         "upload_texture",
-        |_caller: Caller<'_, T>, _id: i64, _ptr: i64, _w: i64, _h: i64| {},
+        |_caller: Caller<'_, T>, _id: i64, _ptr: i64, _len: i64, _w: i64, _h: i64| {},
     )?;
     linker.func_wrap(
         "obsid",

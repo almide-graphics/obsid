@@ -1,20 +1,21 @@
 // obsid example — procedural UV sphere with orbit camera
 import self as obsid
+import ffi
 
 // Event handlers delegate to obsid's default orbit camera.
 // Marked as effect fn to verify the compiler fix for module-qualified
 // effect calls in wrap_tail_in_ok.
 effect fn on_pointer_down(x: Float, y: Float, button: Int) -> Unit = {
-  obsid.orbit_on_pointer_down(x, y)
+  obsid.orbit_on_pointer_down(x, y)!
 }
 effect fn on_pointer_up(x: Float, y: Float, button: Int) -> Unit = {
-  obsid.orbit_on_pointer_up()
+  obsid.orbit_on_pointer_up()!
 }
 effect fn on_pointer_move(x: Float, y: Float) -> Unit = {
-  obsid.orbit_on_pointer_move(x, y)
+  obsid.orbit_on_pointer_move(x, y)!
 }
 effect fn on_wheel(delta_y: Float) -> Unit = {
-  obsid.orbit_on_wheel(delta_y)
+  obsid.orbit_on_wheel(delta_y)!
 }
 
 effect fn main() -> Unit = {
@@ -24,11 +25,11 @@ effect fn main() -> Unit = {
   let vc = (rings + 1) * (segs + 1)
   let ic = rings * segs * 6
 
-  let verts = bytes.new(vc * 44)
-  let idx = bytes.new(ic * 2)
+  var verts = bytes.zeros(vc * 44)
+  var idx = bytes.zeros(ic * 2)
 
-  for ring in 0..(rings + 1) {
-    for seg in 0..(segs + 1) {
+  for ring in 0..<(rings + 1) {
+    for seg in 0..<(segs + 1) {
       let phi = obsid.pi() * obsid.to_float(ring) / obsid.to_float(rings)
       let theta = 2.0 * obsid.pi() * obsid.to_float(seg) / obsid.to_float(segs)
       let sin_phi = obsid.sin(phi)
@@ -37,44 +38,44 @@ effect fn main() -> Unit = {
       let nz = sin_phi * obsid.sin(theta)
       let vi = ring * (segs + 1) + seg
       let off = vi * 44
-      bytes.set_f32_le(verts, off + 0, nx * radius)
-      bytes.set_f32_le(verts, off + 4, ny * radius)
-      bytes.set_f32_le(verts, off + 8, nz * radius)
-      bytes.set_f32_le(verts, off + 12, nx)
-      bytes.set_f32_le(verts, off + 16, ny)
-      bytes.set_f32_le(verts, off + 20, nz)
+      bytes.put_f32_le(verts, off + 0, nx * radius)
+      bytes.put_f32_le(verts, off + 4, ny * radius)
+      bytes.put_f32_le(verts, off + 8, nz * radius)
+      bytes.put_f32_le(verts, off + 12, nx)
+      bytes.put_f32_le(verts, off + 16, ny)
+      bytes.put_f32_le(verts, off + 20, nz)
       let t = (ny + 1.0) * 0.5
-      bytes.set_f32_le(verts, off + 24, 0.2 + t * 0.7)
-      bytes.set_f32_le(verts, off + 28, 0.5 + t * 0.4)
-      bytes.set_f32_le(verts, off + 32, 0.6 + t * 0.3)
+      bytes.put_f32_le(verts, off + 24, 0.2 + t * 0.7)
+      bytes.put_f32_le(verts, off + 28, 0.5 + t * 0.4)
+      bytes.put_f32_le(verts, off + 32, 0.6 + t * 0.3)
     }
   }
 
-  for ring in 0..rings {
-    for seg in 0..segs {
+  for ring in 0..<rings {
+    for seg in 0..<segs {
       let qi = ring * segs + seg
       let off = qi * 12
       let a = ring * (segs + 1) + seg
       let b = a + segs + 1
-      bytes.set_u16_le(idx, off + 0, a)
-      bytes.set_u16_le(idx, off + 2, a + 1)
-      bytes.set_u16_le(idx, off + 4, b)
-      bytes.set_u16_le(idx, off + 6, a + 1)
-      bytes.set_u16_le(idx, off + 8, b + 1)
-      bytes.set_u16_le(idx, off + 10, b)
+      bytes.put_u16_le(idx, off + 0, a)
+      bytes.put_u16_le(idx, off + 2, a + 1)
+      bytes.put_u16_le(idx, off + 4, b)
+      bytes.put_u16_le(idx, off + 6, a + 1)
+      bytes.put_u16_le(idx, off + 8, b + 1)
+      bytes.put_u16_le(idx, off + 10, b)
     }
   }
 
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, bytes.data_ptr(verts), vc, bytes.data_ptr(idx), ic)
+  obsid.upload_mesh(0, ffi.region(verts), vc, ffi.region(idx), ic)
   obsid.set_mesh_material(0, 64.0, 0.9, 0.9, 0.95)
 
   // target origin, initial yaw 0, pitch 0.3, distance 7, [3..20]
-  obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.3, 7.0, 3.0, 20.0)
+  obsid.orbit_init(0.0, 0.0, 0.0, 0.0, 0.3, 7.0, 3.0, 20.0)!
 }
 
 effect fn render_frame(time: Float) -> Unit = {
-  obsid.orbit_apply(60.0, obsid.get_aspect(), 0.1, 100.0)
+  obsid.orbit_apply(60.0, obsid.get_aspect(), 0.1, 100.0)!
 
   obsid.set_dir_light(0.25, 0.25, 0.3, 0.6, 0.8, 0.4)
   obsid.set_ambient(0.08, 0.08, 0.1)

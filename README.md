@@ -42,10 +42,11 @@ effect fn render_frame(time: Float) -> Unit = {
 
 ```almide
 import obsid
+import ffi
 
 effect fn main() -> Unit = {
   obsid.create_mesh(0)
-  obsid.upload_mesh(0, vert_ptr, vert_count, idx_ptr, idx_count)
+  obsid.upload_mesh(0, ffi.region(verts), vert_count, ffi.region(idx), idx_count)
   obsid.set_camera(0.785, 1.333, 0.1, 100.0, 0.0, 2.0, 5.0, 0.0, 0.0, 0.0)
 }
 ```
